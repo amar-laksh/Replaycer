@@ -1,15 +1,16 @@
-function replaycer(request, sender, sendResponse){
-  replaceAndWatch(request.oldWord, request.newWord);
-  browser.runtime.onMessage.removeListener(replaycer);
+// Use var to avoid "Error: redeclaration of const replacer" for now
+// TODO: Closure / typeof and avoiding repetitive loading is right practice.
+var replacer = (request, sender, sendResponse) => {
+  replaceAndWatch(request.oldText, request.newText);
+  browser.runtime.onMessage.removeListener(replacer);
 }
 
-function replaceAndWatch(ow, nw) {
+var replaceAndWatch = (ow, nw) => {
   replaceText(document.body, ow, nw);
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-        for (let i = 0; i < mutation.addedNodes.length; i++) {
-          const newNode = mutation.addedNodes[i];
+        for (let newNode of mutation.addedNodes) {
           replaceText(newNode, ow, nw);
         }
       }
@@ -22,7 +23,7 @@ function replaceAndWatch(ow, nw) {
 }
 
 
-function replaceText (node, ow, nw) {
+var replaceText = (node, ow, nw) => {
   if (node.nodeType === Node.TEXT_NODE) {
     if (node.parentNode &&
         node.parentNode.nodeName === 'TEXTAREA') {
@@ -34,11 +35,11 @@ function replaceText (node, ow, nw) {
     node.textContent = content;
   }
   else {
-    for (let i = 0; i < node.childNodes.length; i++) {
-      replaceText(node.childNodes[i], ow, nw);
-    }    
+    for (let childNode of node.childNodes) {
+      replaceText(childNode, ow, nw);
+    }
   }
 }
 
 
-browser.runtime.onMessage.addListener(replaycer);
+browser.runtime.onMessage.addListener(replacer);
