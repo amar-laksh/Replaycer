@@ -9,5 +9,5 @@ Simply replaces the text in a webpage for your exclusive amusement!
 
 # DEMO TIME!
 
-![Awesome Browser Example](firefox.png)
-![News Example](news.png)
+![Awesome Browser Example](./images/firefox.png)
+![News Example](./images/news.png)
