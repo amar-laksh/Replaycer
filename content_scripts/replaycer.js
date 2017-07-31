@@ -1,9 +1,9 @@
 function replaycer(request, sender, sendResponse){
-  doEverything(request.oldWord, request.newWord);
+  replaceAndWatch(request.oldWord, request.newWord);
   browser.runtime.onMessage.removeListener(replaycer);
 }
 
-function doEverything(ow, nw) {
+function replaceAndWatch(ow, nw) {
   replaceText(document.body, ow, nw);
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -34,8 +34,6 @@ function replaceText (node, ow, nw) {
     node.textContent = content;
   }
   else {
-    // This node contains more than just text, call replaceText() on each
-    // of its children.
     for (let i = 0; i < node.childNodes.length; i++) {
       replaceText(node.childNodes[i], ow, nw);
     }    
